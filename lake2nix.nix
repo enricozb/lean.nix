@@ -14,17 +14,23 @@ let
       # ref = dep."inputRev?";
     };
 
+  # TODO: clean up the args here, either use the unpacked ones or don't
   lake2nix = {
     # the name of the lake package being built
     name,
+
     # the package source
     src,
+
     # the nix system being built for
     system ? builtins.currentSystem,
+
     # an object containing the `buildLeanPackage` function
     lean-toolchain ? null,
+
     # a path to the `lake-manifest.json` file
     lake-manifest-file ? "${src}/lake-manifest.json",
+
     # path to the `lean-toolchain` file
     lean-toolchain-file ? "${src}/lean-toolchain",
 
@@ -55,9 +61,7 @@ let
     #       - std@v.0.5.0
     #
     # then std@v1.0.0 is used for all references of std, even the one under aesop.
-    deps ? { },
-
-    }@args:
+    deps ? { }, }@args:
 
     let
       # TODO: unclear if this is the correct approach. this works for mathlib (-> Mathlib)
@@ -87,6 +91,8 @@ let
           # TODO: this can be something like "nightly-2023-10-12", if this is the case, need to
           #       pull from this repo: https://github.com/leanprover/lean4-nightly instead, as
           #       it tags nightly versions.
+          #       code that actually parses this is here:
+          #         https://github.com/leanprover/elan/blob/e434e1c60d39034aa15527be124a172c217caaae/src/elan-dist/src/dist.rs#L32-L59
           ref = builtins.elemAt parts 1;
         in (import (builtins.fetchGit {
           # TODO: should github be hardcoded?
@@ -131,7 +137,6 @@ let
 
     in {
       inherit lean-toolchain;
-
       package = lean-toolchain.buildLeanPackage buildLeanPackageArgs;
     };
 
