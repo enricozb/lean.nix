@@ -64,7 +64,7 @@ let
         in builtins.map (
 
           { git }:
-          (lake2nix {
+          builtins.trace "mapping dep named: ${git.name}" (lake2nix {
             name = git.name;
             src = fetchDep git;
             system = system;
@@ -80,11 +80,7 @@ let
       package = lean.buildLeanPackage {
         inherit src;
         name = capitalize name;
-      } // (let
-        depNames = lib.concatStringsSep ", "
-          (builtins.map ({ git }: git.name) lake-manifest.packages);
-      in builtins.trace "deps: ${depNames}"
-      (if deps == [ ] then { } else { inherit deps; }));
+      } // (if deps == [ ] then { } else { inherit deps; });
     };
 
 in lake2nix
