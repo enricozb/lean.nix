@@ -113,7 +113,8 @@ let
         [ ];
 
     in {
-      inherit lean;
+      inherit lean-toolchain;
+
       package = lean-toolchain.buildLeanPackage ({
         inherit name src;
       } // (if deps == [ ] then { } else { inherit deps; })
