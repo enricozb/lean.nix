@@ -116,7 +116,7 @@ let
           }" (lake2nix {
             name = git.name;
             src = fetchDep deps.${git.name};
-            inherit system lean-toolchain overrides;
+            inherit system lean-toolchain overrides deps;
           }).package
 
         ) lake-manifest.packages
