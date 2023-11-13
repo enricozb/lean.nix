@@ -1,5 +1,5 @@
 # known fake files needed to build common lean4 packages
-{ }:
+{ pkgs }:
 
 rec {
   # from: https://github.com/nomeata/loogle/blob/6e49f2b0d96ccc093c87dbc963819ece51e7b582/flake.nix#L44-L83
