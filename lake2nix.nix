@@ -61,10 +61,7 @@ let
           lake-manifest =
             builtins.fromJSON (builtins.readFile lake-manifest-file);
 
-          depNames = builtins.concatStringsSep ", "
-            (builtins.map ({ git }: git.name) lake-manifest.packages);
-
-        in builtins.trace "dep names: ${depNames}" builtins.map (
+        in builtins.map (
 
           { git }:
           builtins.trace "mapping dep named: ${git.name}" (lake2nix {
@@ -80,10 +77,10 @@ let
 
     in {
       inherit lean;
-      package = lean.buildLeanPackage {
+      package = lean.buildLeanPackage ({
         inherit src;
         name = capitalize name;
-      } // (if deps == [ ] then { } else { inherit deps; });
+      } // (if deps == [ ] then { } else { inherit deps; }));
     };
 
 in lake2nix
