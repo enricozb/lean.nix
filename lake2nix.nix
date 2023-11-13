@@ -119,7 +119,7 @@ let
         inherit name src;
       } // (if deps == [ ] then { } else { inherit deps; })
         // (if fake-files ? ${lower-name} then
-          builtins.trace "adding fake files for dep: {lower-name}" {
+          builtins.trace "adding fake files for dep: ${lower-name}" {
             overrideBuildModAttrs = addFakeFiles fake-files.${lower-name};
           }
         else
