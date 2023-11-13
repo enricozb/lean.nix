@@ -105,7 +105,8 @@ let
           deps = (builtins.listToAttrs (builtins.map ({ git }: {
             name = git.name;
             value = git;
-          }) lake-manifest.packages)) // args.deps;
+          }) lake-manifest.packages))
+            // (if args ? deps then args.deps else { });
 
         in builtins.map (
 
