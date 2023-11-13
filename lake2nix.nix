@@ -17,7 +17,7 @@ let
     builtins.fetchGit {
       url = dep.url;
       rev = dep.rev;
-      ref = dep."inputRev?";
+      # ref = dep."inputRev?";
     };
 
   lake2nix = {
