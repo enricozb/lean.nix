@@ -50,7 +50,7 @@ let
       name = capitalize args.name;
       lower-name = lib.strings.toLower args.name;
 
-      lean-toolchain = if !(builtins.isNull args.lean-toolchain) then
+      lean-toolchain = if args ? lean-toolchain then
         args.lean-toolchain
       else
         let
