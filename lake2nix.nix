@@ -73,14 +73,14 @@ let
 
         ) lake-manifest.packages
       else
-        [ lean.Lean ];
+        [ ];
 
     in {
       inherit lean;
       package = lean.buildLeanPackage {
+        inherit src;
         name = capitalize name;
-        inherit src deps;
-      };
+      } // (if deps == [ ] then { } else { inherit deps; });
     };
 
 in lake2nix
