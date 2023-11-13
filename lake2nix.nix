@@ -51,7 +51,8 @@ let
           # TODO: should github be hardcoded?
           url = "git@github.com:${repo}";
           ref = "refs/tags/${ref}";
-          # TODO: need a hash here or else this won't be pure
+          # TODO: need a hash here or else this won't be pure.
+          #       maybe purity will only be possible if lean-toolchain is provided.
         })).packages.${builtins.currentSystem};
 
       # get deps from lake-manifest-file if it exists
@@ -72,7 +73,7 @@ let
 
         ) lake-manifest.packages
       else
-        [ ];
+        [ lean.Lean ];
 
     in {
       inherit lean;
