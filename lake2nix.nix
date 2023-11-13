@@ -112,10 +112,7 @@ let
       else
         [ ];
 
-    in {
-      inherit lean-toolchain;
-
-      package = lean-toolchain.buildLeanPackage ({
+      args = {
         inherit name src;
       } // (if deps == [ ] then { } else { inherit deps; })
         // (if fake-files ? ${lower-name} then
@@ -123,7 +120,15 @@ let
             overrideBuildModAttrs = addFakeFiles fake-files.${lower-name};
           }
         else
-          { }));
+          { });
+
+    in {
+      inherit lean-toolchain;
+
+      package = lean-toolchain.buildLeanPackage (builtins.trace
+        "building ${args.name} with args: ${
+          lib.concatMapStringsSep ", " (builtins.attrNames args)
+        }" args);
     };
 
 in lake2nix
