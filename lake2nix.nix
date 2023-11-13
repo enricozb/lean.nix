@@ -14,28 +14,6 @@ let
       # ref = dep."inputRev?";
     };
 
-  # from: https://github.com/nomeata/loogle/blob/6e49f2b0d96ccc093c87dbc963819ece51e7b582/flake.nix#L44-L83
-  # addFakeFile can plug into buildLeanPackage’s overrideBuildModAttrs
-  # it takes a lean module name and a filename, and makes that file available
-  # (as an empty file) in the build tree, e.g. for include_str.
-  # this is necessary for Mathlib, ProofWidgets, and maybe others.
-  addFakeFiles = m: self: super:
-    if m ? ${super.name} then
-      let paths = m.${super.name};
-      in {
-        src = pkgs.runCommandCC "${super.name}-patched" {
-          inherit (super) leanPath src relpath;
-        } (''
-          dir=$(dirname $relpath)
-          mkdir -p $out/$dir
-          if [ -d $src ]; then cp -r $src/. $out/$dir/; else cp $src $out/$leanPath; fi
-        '' + pkgs.lib.concatMapStringsSep "\n" (p: ''
-          install -D -m 644 ${pkgs.emptyFile} $out/${p}
-        '') paths);
-      }
-    else
-      { };
-
   lake2nix = {
     # the name of the lake package being built
     name,
@@ -50,11 +28,11 @@ let
     # path to the `lean-toolchain` file
     lean-toolchain-file ? "${src}/lean-toolchain",
 
-    # a map of fake files to add for lean packages with a given name.
-    # the top-level keys for this attrset need to be in lower case
+    # a map of overrides to provide to buildLeanPackage for specific packages.
+    # the top-level keys for this attrset represent the packages and MUST be in lower case
     # for example:
-    #   fake-files = {
-    #     mathlib = {
+    #   mathlib = {
+    #     overrideBuildModAttrs = addFakeFiles {
     #       "Mathlib.Tactic.Widget.CommDiag" = [
     #         "widget/src/penrose/commutative.dsl"
     #         "widget/src/penrose/commutative.sty"
@@ -63,7 +41,7 @@ let
     #       ];
     #     }
     #   }
-    fake-files ? { }, }@args:
+    overrides ? { }, }@args:
 
     let
       # TODO: unclear if this is the correct approach. this works for mathlib (-> Mathlib)
@@ -115,20 +93,12 @@ let
       buildLeanPackageArgs = {
         inherit name src;
       } // (if deps == [ ] then { } else { inherit deps; })
-        // (if fake-files ? ${lower-name} then
-          builtins.trace "adding fake files for dep: ${lower-name}" {
-            overrideBuildModAttrs = addFakeFiles fake-files.${lower-name};
-          }
-        else
-          { });
+        // (if overrides ? ${lower-name} then overrides.${lower-name} else { });
 
     in {
       inherit lean-toolchain;
 
-      package = lean-toolchain.buildLeanPackage (builtins.trace
-        "building ${buildLeanPackageArgs.name} with args: ${
-          lib.concatStringsSep ", " (builtins.attrNames buildLeanPackageArgs)
-        }" buildLeanPackageArgs);
+      package = lean-toolchain.buildLeanPackage buildLeanPackageArgs;
     };
 
 in lake2nix

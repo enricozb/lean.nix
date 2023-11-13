@@ -13,11 +13,11 @@
       let pkgs = nixpkgs.legacyPackages.${system};
       in {
         packages = rec {
-          fake-files = (pkgs.callPackage ./fake-files.nix { });
+          overrides = (pkgs.callPackage ./overrides.nix { });
 
           lake2nix = params:
             (pkgs.callPackage ./lake2nix.nix { })
-            ({ inherit fake-files system; } // params);
+            ({ inherit overrides system; } // params);
         };
       });
 }
