@@ -1,5 +1,6 @@
-let
+{ }:
 
+let
   stripNewline = str:
     let
       len = builtins.stringLength str;
@@ -12,9 +13,25 @@ let
       rev = dep.rev;
       ref = dep."inputRev?";
     };
+in {
+# the name of the lake package being built
+name,
 
-in { name, src, lake-manifest-file ? "${src}/lake-manifest.json"
-, lean-toolchain ? null, lean-toolchain-file ? "${src}/lean-toolchain" }:
+# the package source
+src,
+
+# the nix system being built for
+system ? builtins.currentSystem,
+
+# an object containing the `buildLeanPackage` function
+lean-toolchain ? null,
+
+# a path to the `lake-manifest.json` file
+lake-manifest-file ? "${src}/lake-manifest.json",
+
+# path to the `lean-toolchain` file
+lean-toolchain-file ? "${src}/lean-toolchain" }:
+
 let
   lean = if !(builtins.isNull lean-toolchain) then
     lean-toolchain
@@ -39,13 +56,21 @@ let
     let
       lake-manifest = builtins.fromJSON (builtins.readFile lake-manifest-file);
 
-    in builtins.map ({ git }:
-      lake2nix {
+    in builtins.map (
+
+      { git }:
+      (lake2nix {
         name = git.name;
         src = fetchDep git;
+        system = system;
         lean-toolchain = lean;
-      }) lake-manifest.packages
+      }).package
+
+    ) lake-manifest.packages
   else
     [ ];
 
-in lean.buildLeanPackage { inherit name src deps; }
+in {
+  lean = lean-toolchain;
+  package = lean.buildLeanPackage { inherit name src deps; };
+}

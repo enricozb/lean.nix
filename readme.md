@@ -15,5 +15,8 @@ Some utilities to simplify using lean with nix.
 - Use `lean-toolchain` to know which version of `lean4` to pull.
 - Use `lakefile.lean` to pull the right inputs.
 
+## TODO
+- this should be a `flake.nix`
+
 [1]: https://github.com/leanprover/lean4/tree/master/src/lake
 [2]: https://github.com/leanprover-community/mathlib4
