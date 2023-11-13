@@ -118,9 +118,11 @@ let
       package = lean.buildLeanPackage ({
         inherit name src;
       } // (if deps == [ ] then { } else { inherit deps; })
-        // (if fake-files ? ${lower-name} then {
-          overrideBuildModAttrs = addFakeFiles fake-files.${lower-name};
-        } else
+        // (if fake-files ? ${lower-name} then
+          builtins.trace "adding fake files for dep: {lower-name}" {
+            overrideBuildModAttrs = addFakeFiles fake-files.${lower-name};
+          }
+        else
           { }));
     };
 
