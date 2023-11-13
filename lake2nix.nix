@@ -63,14 +63,14 @@ let
     #       ];
     #     }
     #   }
-    fake-files ? { }, }:
+    fake-files ? { }, }@args:
 
     let
       # TODO: unclear if this is the correct approach. this works for mathlib (-> Mathlib)
       #       but proofwidgets -> Proofwidgets doesn't seem correct since the root is
       #       actually ProofWidgets
-      package-name = capitalize name;
-      lower-name = lib.strings.toLower name;
+      name = capitalize args.name;
+      lower-name = lib.strings.toLower args.name;
 
       lean = if !(builtins.isNull lean-toolchain) then
         lean-toolchain
