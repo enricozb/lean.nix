@@ -68,7 +68,7 @@ let
         [ ];
 
     in {
-      lean = lean-toolchain;
+      inherit lean;
       package = lean.buildLeanPackage { inherit name src deps; };
     };
 
