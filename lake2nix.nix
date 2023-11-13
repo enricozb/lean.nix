@@ -80,7 +80,8 @@ let
       package = lean.buildLeanPackage {
         inherit src;
         name = capitalize name;
-      } // (if deps == [ ] then { } else { inherit deps; });
+      } // (builtins.trace "deps in here ${builtins.toString (deps == [ ])}"
+        (if deps == [ ] then { } else { inherit deps; }));
     };
 
 in lake2nix
