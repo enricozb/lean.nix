@@ -1,4 +1,4 @@
-{ }:
+{ lib }:
 
 let
   stripNewline = str:
@@ -6,6 +6,12 @@ let
       len = builtins.stringLength str;
       last_char = builtins.substring (len - 1) 1 str;
     in if last_char == "\n" then builtins.substring 0 (len - 1) str else str;
+
+  capitalize = str:
+    let
+      first = builtins.substring 0 1 str;
+      rest = builtins.substring 1 (builtins.stringLength str - 1) str;
+    in (lib.strings.toUpper first) + rest;
 
   fetchDep = dep:
     builtins.fetchGit {
@@ -70,7 +76,10 @@ let
 
     in {
       inherit lean;
-      package = lean.buildLeanPackage { inherit name src deps; };
+      package = lean.buildLeanPackage {
+        name = capitalize name;
+        inherit src deps;
+      };
     };
 
 in lake2nix
