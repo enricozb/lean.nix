@@ -36,6 +36,8 @@ rec {
   };
 
   proofwidgets = {
+    name = "ProofWidgets";
+
     overrideBuildModAttrs = addFakeFiles {
       "ProofWidgets.Compat" = [ "build/js/compat.js" ];
       "ProofWidgets.Component.Basic" = [ "build/js/interactiveExpr.js" ];

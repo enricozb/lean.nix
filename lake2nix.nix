@@ -47,6 +47,12 @@ let
       # TODO: unclear if this is the correct approach. this works for mathlib (-> Mathlib)
       #       but proofwidgets -> Proofwidgets doesn't seem correct since the root is
       #       actually ProofWidgets
+      #
+      #       indeed this does fail fro proofwidgets. we should switch to an approach where
+      #       we glob `src` for any `*.lean` whose file name without extension matches `name`
+      #       up to casing. then we should use that as the package name.
+      #
+      #       in the meantime, `overrides` can provide a name for such packages.
       name = capitalize args.name;
       lower-name = lib.strings.toLower args.name;
 
@@ -62,6 +68,9 @@ let
           # "leanprover/lean4"
           repo = builtins.elemAt parts 0;
           # "v4.2.0-rc1"
+          # TODO: this can be something like "nightly-2023-10-12", if this is the case, need to
+          #       pull from this repo: https://github.com/leanprover/lean4-nightly instead, as
+          #       it tags nightly versions.
           ref = builtins.elemAt parts 1;
         in (import (builtins.fetchGit {
           # TODO: should github be hardcoded?
