@@ -45,6 +45,7 @@ let
           # TODO: should github be hardcoded?
           url = "git@github.com:${repo}";
           ref = "refs/tags/${ref}";
+          # TODO: need a hash here or else this won't be pure
         })).packages.${builtins.currentSystem};
 
       # get deps from lake-manifest-file if it exists
