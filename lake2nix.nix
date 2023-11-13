@@ -80,8 +80,11 @@ let
       package = lean.buildLeanPackage {
         inherit src;
         name = capitalize name;
-      } // (builtins.trace "deps in here ${builtins.toString (deps == [ ])}"
-        (if deps == [ ] then { } else { inherit deps; }));
+      } // (let
+        depNames = lib.concatStringsSep ", "
+          (builtins.map ({ git }: git.name) lake-manifest.packages);
+      in builtins.trace "deps: ${depNames}"
+      (if deps == [ ] then { } else { inherit deps; }));
     };
 
 in lake2nix
