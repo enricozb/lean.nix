@@ -41,7 +41,23 @@ let
     #       ];
     #     }
     #   }
-    overrides ? { }, }@args:
+    overrides ? { },
+
+    # dependencies to use in place of others.
+    #
+    # for a given dependency a in the dependency tree of a lean package, lake2nix
+    # only builds it once. specifically it builds it the first time it encounters
+    # it. for example, if a dependency tree for mathlib looks like this
+    #
+    #   - mathlib@v1.0.0:
+    #     - std@v1.0.0
+    #     - aesop@v1.0.0
+    #       - std@v.0.5.0
+    #
+    # then std@v1.0.0 is used for all references of std, even the one under aesop.
+    deps ? { },
+
+    }@args:
 
     let
       # TODO: unclear if this is the correct approach. this works for mathlib (-> Mathlib)
@@ -86,14 +102,20 @@ let
           lake-manifest =
             builtins.fromJSON (builtins.readFile lake-manifest-file);
 
+          deps = (builtins.listToAttrs (builtins.map ({ git }: {
+            name = git.name;
+            value = git;
+          }) lake-manifest.packages)) // args.deps;
+
         in builtins.map (
 
           { git }:
           builtins.trace
-          "building lean dep for ${args.name}: ${git.name} @ ${git.rev}"
-          (lake2nix {
+          "building lean dep for ${args.name}: ${git.name} @ ${git.rev} using ${
+            deps.${git.name}.rev
+          }" (lake2nix {
             name = git.name;
-            src = fetchDep git;
+            src = fetchDep deps.${git.name};
             inherit system lean-toolchain overrides;
           }).package
 
