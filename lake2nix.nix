@@ -127,7 +127,7 @@ let
 
       package = lean-toolchain.buildLeanPackage (builtins.trace
         "building ${buildLeanPackageArgs.name} with args: ${
-          lib.concatMapStringsSep ", " (builtins.attrNames buildLeanPackageArgs)
+          lib.concatStringsSep ", " (builtins.attrNames buildLeanPackageArgs)
         }" buildLeanPackageArgs);
     };
 
