@@ -89,7 +89,8 @@ let
         in builtins.map (
 
           { git }:
-          builtins.trace "building lean dep: ${git.name}" (lake2nix {
+          builtins.trace "building lean dep: ${git.name} @ ${git.rev}"
+          (lake2nix {
             name = git.name;
             src = fetchDep git;
             inherit system lean-toolchain overrides;
