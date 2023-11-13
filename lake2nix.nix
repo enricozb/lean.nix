@@ -72,8 +72,8 @@ let
       name = capitalize args.name;
       lower-name = lib.strings.toLower args.name;
 
-      lean = if !(builtins.isNull lean-toolchain) then
-        lean-toolchain
+      lean-toolchain = if !(builtins.isNull args.lean-toolchain) then
+        args.lean-toolchain
       else
         let
           # "leanprover/lean4:v4.2.0-rc1"
@@ -105,8 +105,7 @@ let
           builtins.trace "building lean dep: ${git.name}" (lake2nix {
             name = git.name;
             src = fetchDep git;
-            system = system;
-            lean-toolchain = lean;
+            inherit system lean-toolchain fake-files;
           }).package
 
         ) lake-manifest.packages
@@ -115,7 +114,7 @@ let
 
     in {
       inherit lean;
-      package = lean.buildLeanPackage ({
+      package = lean-toolchain.buildLeanPackage ({
         inherit name src;
       } // (if deps == [ ] then { } else { inherit deps; })
         // (if fake-files ? ${lower-name} then
