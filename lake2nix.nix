@@ -83,7 +83,7 @@ let
           builtins.trace "building lean dep: ${git.name}" (lake2nix {
             name = git.name;
             src = fetchDep git;
-            inherit system lean-toolchain fake-files;
+            inherit system lean-toolchain overrides;
           }).package
 
         ) lake-manifest.packages
