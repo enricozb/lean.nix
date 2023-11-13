@@ -1,12 +1,6 @@
-rec {
-  lake2nix = import ./lake2nix.nix;
-
-  mathlib = version:
-    lake2nix {
-      name = "mathlib";
-      src = builtins.fetchGit {
-        url = "git@github.com:leanprover-community/mathlib4";
-        ref = "refs/tags/${version}";
-      };
-    };
-}
+(import (let lock = builtins.fromJSON (builtins.readFile ./flake.lock);
+in fetchTarball {
+  url =
+    "https://github.com/edolstra/flake-compat/archive/${lock.nodes.flake-compat.locked.rev}.tar.gz";
+  sha256 = lock.nodes.flake-compat.locked.narHash;
+}) { src = ./.; }).defaultNix
