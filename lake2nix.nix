@@ -61,7 +61,10 @@ let
           lake-manifest =
             builtins.fromJSON (builtins.readFile lake-manifest-file);
 
-        in builtins.map (
+          depNames = builtins.concatStringsSep ", "
+            (builtins.map ({ git }: git.name) lake-manifest.packages);
+
+        in builtins.trace "dep names: ${depNames}" builtins.map (
 
           { git }:
           builtins.trace "mapping dep named: ${git.name}" (lake2nix {
