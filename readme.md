@@ -61,6 +61,7 @@ The output of `lake2nix` contains two attributes:
 and the dependencies that need to be built. `lake-manifest.json` containing `rev` for each of the
 dependencies allows `lake2nix` to be pure.
 
+See the [examples](./examples) directory for example files consuming `lean.nix`.
 
 [1]: https://github.com/leanprover/lean4/blob/master/nix/buildLeanPackage.nix
 [2]: https://github.com/leanprover/lean4/tree/master/src/lake
